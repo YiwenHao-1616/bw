@@ -1,0 +1,35 @@
+name: 每日订单同步(jiahui)
+
+on:
+  schedule:
+    # 每天 03:30 UTC（北京 11:30），与 huisi 错开半小时避免并发冲击秒哒
+    - cron: '30 3 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  crawl-and-sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # 安装 DrissionPage + bs4 + requests，并确保系统有 Chrome
+      - name: 安装依赖
+        run: |
+          pip install -r requirements.txt
+
+      # 设置 CI 环境变量，让 spider_jiahui 自动启用无头模式
+      - name: 运行 spider_jiahui 抓取 jiahui
+        env:
+          CI: 'true'
+        run: python spider_jiahui.py
+
+      - name: 推送 jiahui 到秒哒
+        env:
+          EDGE_URL: ${{ secrets.SUPABASE_EDGE_URL }}
+          SYNC_KEY: ${{ secrets.SYNC_KEY }}
+        run: python push_to_miaoda.py result_jiahui.txt jiahui "$EDGE_URL" "$SYNC_KEY"
