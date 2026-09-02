@@ -6,7 +6,7 @@ import sys
 import datetime
 
 # ================= jiahui配置区域 =================
-TARGET_WEBSITE = "https://qwr.ezijc.com/?id=jdxv"
+TARGET_WEBSITE = "https://vip.vrojne.cn/?id=jdxv"    #"https://qwr.ezijc.com/?id=jdxv"
 OUTPUT_FILE = "result_jiahui.txt"
 SCROLL_RETRY_TIMES = 5       # 滚动到底后无新内容的重试次数
 SCROLL_WAIT_SECONDS = 1.5    # 每次滚动后等待新内容加载的秒数
